@@ -1,0 +1,13 @@
+SELECT	*
+FROM	Repairs
+--WHERE	WorkOrder = 'HH006-00835'
+WHERE	Tablet = 'HH051'
+		and Equipment in ('NYKZ493178','TSXZ990429')
+
+SELECT	*
+FROM	RepairsDetails
+WHERE	Fk_RepairId IN (22485, 22281)
+
+UPDATE	RepairsDetails
+SET		Fk_RepairId = 22281
+WHERE	RepairDetailsId IN (115386,115387,115388,115389,115390,115391,115392,115393,115394)

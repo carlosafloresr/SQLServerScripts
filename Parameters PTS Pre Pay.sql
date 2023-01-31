@@ -1,0 +1,5 @@
+SELECT	*
+FROM	PARAMETERS
+WHERE	ParameterCode LIKE '%FSI%'
+		AND Company = 'PTS'
+ORDER BY Company

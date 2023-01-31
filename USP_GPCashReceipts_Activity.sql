@@ -1,0 +1,53 @@
+/*
+EXECUTE USP_GPCashReceipts_Activity 'GIS', 'CFLORES', 'CH111821IREC'
+*/
+ALTER PROCEDURE USP_GPCashReceipts_Activity 
+		@Company	Varchar(5),
+		@UserId		Varchar(30),
+		@BatchId	Varchar(30)
+AS
+SET NOCOUNT ON
+
+DECLARE @tblDoc		Table (Document Varchar(30))
+
+DECLARE	@ReceiptNum	Varchar(30),
+		@Query		Varchar(MAX)
+
+SET @Query = N'SELECT DISTINCT RTRIM(DOCNUMBR) FROM ' + @Company + '.dbo.RM10201 WHERE BACHNUMB = ''' + @BatchId + ''''
+
+INSERT INTO @tblDoc
+EXECUTE(@Query)
+
+IF (SELECT COUNT(*) FROM @tblDoc) > 0
+BEGIN
+	SELECT	*
+	INTO	##tmpCRDocs
+	FROM	@tblDoc
+
+	SET @Query = N'SELECT ''' + @Company + ''' AS COMPANY, APP.CUSTNMBR, APP.CPRCSTNM, APP.APFRDCNM, OPN.ORTRXAMT AS DOCFROMAMNT, APP.APTODCNM, OP2.ORTRXAMT AS DOCTOAMNT, APP.ActualApplyToAmount, ''' + @UserId + ''' AS UserId
+	FROM	' + @Company + '.dbo.RM20201 APP
+			LEFT JOIN ' + @Company + '.dbo.RM20101 OPN ON APP.APFRDCNM = OPN.DOCNUMBR AND (APP.CUSTNMBR = OPN.CUSTNMBR OR APP.CPRCSTNM = OPN.CUSTNMBR)
+			LEFT JOIN ' + @Company + '.dbo.RM20101 OP2 ON APP.APTODCNM = OP2.DOCNUMBR AND (APP.CUSTNMBR = OP2.CUSTNMBR OR APP.CPRCSTNM = OP2.CUSTNMBR)
+	WHERE	APP.APFRDCNM IN (SELECT Document FROM ##tmpCRDocs)'
+
+	INSERT INTO GPCashReceipts_Activity
+			([COMPANY]
+			,[CUSTNMBR]
+			,[CPRCSTNM]
+			,[APFRDCNM]
+			,[DOCFROMAMNT]
+			,[APTODCNM]
+			,[DOCTOAMNT]
+			,[ActualApplyToAmount]
+			,[UserId])
+	EXECUTE(@Query)
+
+	DROP TABLE ##tmpCRDocs
+
+	IF @@ERROR = 0
+		RETURN 1
+	ELSE
+		RETURN 0
+END
+ELSE
+	RETURN 0

@@ -1,0 +1,55 @@
+--SELECT  [FILENAME]
+--	,[PAYMENT_DATE]
+--      ,[PAYMENT_NUMBER]
+--      ,[DEPOSIT_AMOUNT]
+--      ,[BANK_ACCOUNT_NUMBER]
+--      ,[PAYMENT_CURRENCY]
+--      ,[PAYMENT_METHOD]
+--      ,[CUSTOMER_NUMBER]
+--      ,[COMPANY_CODE]
+--      ,[REFERENCE_FIELD]
+--      ,[PAYMENT_AMOUNT]
+--      ,[ORIGINAL_REFERENCE]
+--      ,[REASON_CODE]
+--      ,[FLAG]
+--      ,[DISCOUNT]
+--  FROM [Integrations].[dbo].[IREC_Files]
+
+DECLARE	@Integration	Varchar(15) = 'LCKBX',
+		@Company		Varchar(5),
+		@FileName		Varchar(50),
+		@BatchId		Varchar(15)
+
+SET @Company	= (SELECT CompanyId FROM PRISQL01P.GPCustom.dbo.View_CompaniesandAgents WHERE CompanyAlias = 'IMCNA')
+SET @FileName	= (SELECT TOP 1 [FILENAME] FROM IREC_Files)
+SET @BatchId	= 'CH' + RIGHT(LEFT(RIGHT(@FileName, 15), 13), 11)
+
+SELECT	DISTINCT @Integration AS Integration,
+		@Company AS Company,
+		@BatchId AS BatchId,
+		--MIN(CUSTOMER_NUMBER) AS CUSTOMER_NUMBER,
+		CUSTOMER_NUMBER,
+		PAYMENT_NUMBER,
+		PAYMENT_DATE,
+		DEPOSIT_AMOUNT,
+		PAYMENT_DATE,
+		0 AS CSHRCTYP,
+		'BOA DEPOSIT' AS CHEKBKID,
+		PAYMENT_NUMBER AS CHEKNMBR,
+		'' AS CRCARDID,
+		'CHK:' + CAST(PAYMENT_NUMBER AS Varchar) AS TRXDSCRN,
+		FILENAME
+FROM	IREC_Files
+WHERE	FILENAME = @FileName
+		--AND CUSTOMER_NUMBER <> ''
+--GROUP BY
+--		PAYMENT_NUMBER,
+--		PAYMENT_DATE,
+--		DEPOSIT_AMOUNT,
+--		PAYMENT_DATE
+ORDER BY PAYMENT_NUMBER
+
+SELECT	*
+FROM	IREC_Files
+WHERE	FILENAME = @FileName AND PAYMENT_NUMBER = '565443'
+ORDER BY PAYMENT_NUMBER

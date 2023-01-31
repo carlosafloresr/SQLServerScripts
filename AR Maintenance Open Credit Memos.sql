@@ -1,0 +1,9 @@
+SELECT	CUSTNMBR AS CustomerNumber,
+		CPRCSTNM AS ParentNumber,
+		DOCNUMBR AS DocNumber,
+		CAST(DOCDATE AS Date) AS DocumentDate,
+		ORTRXAMT AS OriginalAmount,
+		CURTRXAM AS CurrentBalance
+FROM	IMC.dbo.RM20101
+WHERE	RMDTYPAL IN (7, 8)
+		AND CURTRXAM > 0

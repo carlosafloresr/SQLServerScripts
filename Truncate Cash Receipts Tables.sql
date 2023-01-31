@@ -1,0 +1,4 @@
+TRUNCATE TABLE CashReceipt
+TRUNCATE TABLE CashReceiptBatches
+TRUNCATE TABLE CashReceipts_Lockbox
+TRUNCATE TABLE CashReceiptTrucking

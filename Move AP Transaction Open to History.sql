@@ -1,0 +1,226 @@
+/*
+SELECT * FROM PM20000 WHERE VendorId = 'A0119' AND VCHRNMBR = '00000000000005527'
+SELECT * FROM PM10100 WHERE VendorId = 'A0119' AND VCHRNMBR = '00000000000005527'
+
+SELECT * FROM PM30200 WHERE VendorId = 'A0119' AND VCHRNMBR = '00000000000005527'
+SELECT * FROM PM30600 WHERE VendorId = 'A0119' AND VCHRNMBR = '00000000000005527'
+*/
+DECLARE	@VendorId	Varchar(12),
+		@VchrNmbr	Varchar(30)
+
+SET		@VendorId = 'AZ119'
+SET		@VchrNmbr = '42343242342342423' --'00000000000005527'
+
+BEGIN TRANSACTION
+
+INSERT INTO PM30200
+           (VCHRNMBR
+           ,VENDORID
+           ,DOCTYPE
+           ,DOCDATE
+           ,DOCNUMBR
+           ,DOCAMNT
+           ,CURTRXAM
+           ,DISTKNAM
+           ,DISCAMNT
+           ,DSCDLRAM
+           ,BACHNUMB
+           ,TRXSORCE
+           ,BCHSOURC
+           ,DISCDATE
+           ,DUEDATE
+           ,PORDNMBR
+           ,TEN99AMNT
+           ,WROFAMNT
+           ,DISAMTAV
+           ,TRXDSCRN
+           ,UN1099AM
+           ,BKTPURAM
+           ,BKTFRTAM
+           ,BKTMSCAM
+           ,VOIDED
+           ,HOLD
+           ,CHEKBKID
+           ,DINVPDOF
+           ,PPSAMDED
+           ,PPSTAXRT
+           ,PGRAMSBJ
+           ,GSTDSAMT
+           ,POSTEDDT
+           ,PTDUSRID
+           ,MODIFDT
+           ,MDFUSRID
+           ,PYENTTYP
+           ,CARDNAME
+           ,PRCHAMNT
+           ,TRDISAMT
+           ,MSCCHAMT
+           ,FRTAMNT
+           ,TAXAMNT
+           ,TTLPYMTS
+           ,CURNCYID
+           ,PYMTRMID
+           ,SHIPMTHD
+           ,TAXSCHID
+           ,PCHSCHID
+           ,FRTSCHID
+           ,MSCSCHID
+           ,PSTGDATE
+           ,DISAVTKN
+           ,CNTRLTYP
+           ,NOTEINDX
+           ,PRCTDISC
+           ,RETNAGAM
+           ,ICTRX
+           ,Tax_Date
+           ,PRCHDATE
+           ,CORRCTN
+           ,SIMPLIFD
+           ,APLYWITH
+           ,Electronic
+           ,ECTRX
+           ,DocPrinted
+           ,TaxInvReqd
+           ,VNDCHKNM
+           ,BackoutTradeDisc
+           ,CBVAT
+           ,VADCDTRO)
+SELECT	VCHRNMBR
+		,VENDORID
+		,DOCTYPE
+		,DOCDATE
+		,DOCNUMBR
+		,DOCAMNT
+		,CURTRXAM
+		,DISTKNAM
+		,DISCAMNT
+		,DSCDLRAM
+		,BACHNUMB
+		,TRXSORCE
+		,BCHSOURC
+		,DISCDATE
+		,DUEDATE
+		,PORDNMBR
+		,TEN99AMNT
+		,WROFAMNT
+		,DISAMTAV
+		,TRXDSCRN
+		,UN1099AM
+		,BKTPURAM
+		,BKTFRTAM
+		,BKTMSCAM
+		,VOIDED
+		,HOLD
+		,CHEKBKID
+		,DINVPDOF
+		,PPSAMDED
+		,PPSTAXRT
+		,PGRAMSBJ
+		,GSTDSAMT
+		,POSTEDDT
+		,PTDUSRID
+		,MODIFDT
+		,MDFUSRID
+		,PYENTTYP
+		,CARDNAME
+		,PRCHAMNT
+		,TRDISAMT
+		,MSCCHAMT
+		,FRTAMNT
+		,TAXAMNT
+		,TTLPYMTS
+		,CURNCYID
+		,PYMTRMID
+		,SHIPMTHD
+		,TAXSCHID
+		,PCHSCHID
+		,FRTSCHID
+		,MSCSCHID
+		,PSTGDATE
+		,DISAVTKN
+		,CNTRLTYP
+		,NOTEINDX
+		,PRCTDISC
+		,RETNAGAM
+		,ICTRX
+		,Tax_Date
+		,PRCHDATE
+		,CORRCTN
+		,SIMPLIFD
+		,APLYWITH
+		,Electronic
+		,ECTRX
+		,DocPrinted
+		,TaxInvReqd
+		,VNDCHKNM
+		,BackoutTradeDisc
+		,CBVAT
+		,VADCDTRO
+FROM	PM20000 
+WHERE	VendorId = @VendorId
+		AND VCHRNMBR = @VchrNmbr
+
+INSERT INTO PM30600
+		(DOCTYPE
+		,VCHRNMBR
+		,DSTSQNUM
+		,CNTRLTYP
+		,CRDTAMNT
+		,DEBITAMT
+		,DSTINDX
+		,DISTTYPE
+		,CHANGED
+		,USERID
+		,PSTGSTUS
+		,VENDORID
+		,TRXSORCE
+		,PSTGDATE
+		,CURNCYID
+		,CURRNIDX
+		,ORCRDAMT
+		,ORDBTAMT
+		,APTVCHNM
+		,APTODCTY
+		,SPCLDIST
+		,DistRef)
+SELECT	DOCTYPE
+		,PMD.VCHRNMBR
+		,PMD.DSTSQNUM
+		,PMD.CNTRLTYP
+		,PMD.CRDTAMNT
+		,PMD.DEBITAMT
+		,PMD.DSTINDX
+		,PMD.DISTTYPE
+		,PMD.CHANGED
+		,PMD.USERID
+		,PMD.PSTGSTUS
+		,PMD.VENDORID
+		,PMD.TRXSORCE
+		,PMD.PSTGDATE
+		,PMD.CURNCYID
+		,PMD.CURRNIDX
+		,PMD.ORCRDAMT
+		,PMD.ORDBTAMT
+		,PMD.APTVCHNM
+		,PMD.APTODCTY
+		,PMD.SPCLDIST
+		,PMD.DistRef
+FROM	PM10100 PMD
+		INNER JOIN PM20000 PMH ON PMD.VCHRNMBR = PMH.VCHRNMBR AND PMD.VendorId = PMH.VendorId
+WHERE	PMD.VendorId = @VendorId
+		AND PMD.VCHRNMBR = @VchrNmbr
+
+DELETE PM20000 WHERE VendorId = @VendorId AND VCHRNMBR = @VchrNmbr
+
+DELETE PM10100 WHERE VendorId = @VendorId AND VCHRNMBR = @VchrNmbr
+
+IF @@ERROR = 0
+BEGIN
+	COMMIT TRANSACTION
+	PRINT 'Success!'
+END
+ELSE
+BEGIN
+	ROLLBACK TRANSACTION
+	PRINT 'Error!'
+END

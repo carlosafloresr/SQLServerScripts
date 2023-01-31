@@ -1,0 +1,32 @@
+/*
+SELECT * FROM PM30200 WHERE TRXSORCE = 'PMTRX00000778'
+
+SELECT * FROM PM20000 WHERE TRXSORCE = 'PMTRX00000778'
+
+SELECT SUM(DOCAMNT) FROM PM20000 WHERE TRXSORCE = 'PMTRX00000778'
+SELECT * FROM PM10100 WHERE TRXSORCE = 'PMTRX00000778'
+SELECT * FROM GL00105
+SELECT * FROM GPCustom.dbo.EscrowTransactions
+*/
+
+SELECT	HD.BachNumb
+		,HD.VchrNmbr
+		,HD.VendorId
+		,ET.VendorId AS DriverId
+		,HD.DocDate
+		,HD.DocNumbr
+		,HD.DocAmnt
+		,GL.ActNumSt
+		,DT.CrdtAmnt
+		,DT.DebitAmt
+		,HD.TrxSorce
+		,HD.TrxDscrn
+		,HD.MdfUsrId 
+FROM	PM20000 HD
+		INNER JOIN PM10100 DT ON HD.VchrNmbr = DT.VchrNmbr AND HD.TRXSORCE = DT.TRXSORCE
+		INNER JOIN GL00105 GL ON DT.DstIndx = GL.ActIndx
+		LEFT JOIN GPCustom..EscrowTransactions ET ON ET.CompanyId = 'IMC' AND HD.VchrNmbr = ET.VoucherNumber AND GL.ActNumSt = ET.AccountNumber AND DT.DstSqNum = ET.ItemNumber
+WHERE	HD.TRXSORCE = 'PMTRX00000778'
+ORDER BY 
+		HD.VchrNmbr
+		,GL.ActNumSt

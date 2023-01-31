@@ -1,0 +1,1 @@
+EXEC sp_serveroption @server = 'IntegrationsDB',@optname = 'remote proc transaction promotion', @optvalue = 'false' ;

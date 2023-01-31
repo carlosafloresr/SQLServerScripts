@@ -1,0 +1,1 @@
+select * from Dynamics.dbo.HRPMDP01 WHERE CompanyCode_I <> 'TEST' AND DepartmentCode_I <> 'DEFAUL' ORDER BY DEPARTMENTNAME_I

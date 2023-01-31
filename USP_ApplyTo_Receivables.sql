@@ -1,0 +1,87 @@
+/*
+EXECUTE USP_ApplyTo_Receivables '4770', 'C27-120568', '27-120568', 1054.75, '04/03/2018'
+*/
+ALTER PROCEDURE USP_ApplyTo_Receivables
+		@CustomerId		Varchar(20),
+		@ApplyFrom		Varchar(30),
+		@ApplyTo		Varchar(30),
+		@Amount			Numeric(10,2),
+		@PostingDate	Date,
+		@NatAccount		Varchar(20) = Null,
+		@WriteOffAmnt	Numeric(10,2) = 0
+AS
+DECLARE @DocDate		Date = @PostingDate
+
+IF @WriteOffAmnt IS Null
+	SET @WriteOffAmnt = 0
+
+INSERT INTO RM20201
+		(CUSTNMBR,
+		CPRCSTNM,
+		GLPOSTDT,
+		DATE1,
+		APTODCNM,
+		APTODCTY,
+		APTODCDT,
+		ApplyToGLPostDate,
+		CURRNIDX,
+		APPTOAMT,
+		ORAPTOAM,
+		APFRDCNM,
+		APFRDCTY,
+		APFRDCDT,
+		ApplyFromGLPostDate,
+		APFRMAPLYAMT,
+		ActualApplyToAmount,
+		WROFAMNT,
+		ActualWriteOffAmount,
+		APFRMWROFAMT)
+SELECT	ARTO.CUSTNMBR,
+		ARTO.CPRCSTNM,
+		@PostingDate,
+		@PostingDate,
+		ARTO.DOCNUMBR,
+		ARTO.RMDTYPAL,
+		ARTO.DOCDATE,
+		ARTO.POSTDATE,
+		ARTO.CURNCYID,
+		@Amount,
+		@Amount,
+		ARFROM.DOCNUMBR,
+		ARFROM.RMDTYPAL,
+		ARFROM.DOCDATE,
+		ARFROM.POSTDATE,
+		@Amount,
+		@Amount,
+		@WriteOffAmnt,
+		@WriteOffAmnt,
+		@WriteOffAmnt
+FROM	RM20101 ARTO
+		LEFT JOIN RM20101 ARFROM ON (ARFROM.CUSTNMBR = ARTO.CUSTNMBR OR ARFROM.CUSTNMBR = ARTO.CPRCSTNM) AND ARFROM.DOCNUMBR = @ApplyFrom
+		LEFT JOIN RM20201 ARMAIN ON (ARMAIN.CUSTNMBR = ARTO.CUSTNMBR OR ARMAIN.CUSTNMBR = ARTO.CPRCSTNM) AND ARMAIN.APTODCNM = @ApplyFrom
+WHERE	(ARTO.CUSTNMBR = @CustomerId
+		OR ARTO.CPRCSTNM = ISNULL(@NatAccount,'***NOTHING***'))
+		AND ARTO.DOCNUMBR = @ApplyTo
+		AND ARMAIN.APTODCNM IS Null
+		AND ARTO.RMDTYPAL <> 3
+
+IF @@ERROR = 0
+BEGIN
+	UPDATE	RM20101
+	SET		CURTRXAM = CURTRXAM - @Amount,
+			WROFAMNT = WROFAMNT + @WriteOffAmnt
+	WHERE	(CUSTNMBR = @CustomerId
+			OR CPRCSTNM = ISNULL(@NatAccount,'***NOTHING***'))
+			AND DOCNUMBR = @ApplyFrom
+
+	IF @@ERROR = 0
+	BEGIN
+		UPDATE	RM20101
+		SET		CURTRXAM = CURTRXAM - @Amount,
+				WROFAMNT = WROFAMNT + @WriteOffAmnt
+		WHERE	(CUSTNMBR = @CustomerId
+				OR CPRCSTNM = ISNULL(@NatAccount,'***NOTHING***'))
+				AND DOCNUMBR = @ApplyTo
+	END
+END
+GO

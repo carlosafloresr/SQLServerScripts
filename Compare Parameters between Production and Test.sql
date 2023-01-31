@@ -1,0 +1,9 @@
+--SELECT	*
+--FROM	PARAMETERS
+
+SELECT	*
+FROM	PRISQL01P.GPCustom.dbo.PARAMETERS PAR1
+		INNER JOIN Parameters PAR2 ON PAR1.Company = PAR2.Company AND PAR1.ParameterCode = PAR2.ParameterCode
+WHERE	PAR1.VarC <> PAR2.VarC
+		AND PAR1.VarC IS NOT Null
+		AND PAR1.VarC NOT LIKE '\\%'

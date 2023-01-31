@@ -1,0 +1,67 @@
+/*
+EXECUTE USP_PayrollGrossPivot '1/1/2010', '3/18/2010'
+*/
+CREATE PROCEDURE USP_PayrollGrossPivot
+		@DateIni	Datetime,
+		@DateEnd	Datetime
+AS
+DECLARE @CatPVT		Varchar(MAX), 
+		@ColumnCode Datetime,
+		@CatID		Int
+
+SET		@CatPVT = N''
+
+DECLARE CheckDates CURSOR LOCAL KEYSET OPTIMISTIC FOR
+SELECT DISTINCT CHEKDATE FROM UPR30300 WHERE CHEKDATE BETWEEN @DateIni AND @DateEnd ORDER BY CHEKDATE
+OPEN CheckDates
+FETCH FROM CheckDates INTO @ColumnCode
+
+WHILE @@FETCH_STATUS = 0 
+BEGIN
+ SET @CatPVT = @CatPVT + N',[' + CONVERT(Char(10), @ColumnCode, 101) + N']'
+ FETCH FROM CheckDates INTO @ColumnCode
+END
+
+CLOSE CheckDates
+DEALLOCATE CheckDates
+
+SET	@CatPVT = SUBSTRING(@CatPVT, 2, LEN(@CatPVT))
+
+DECLARE @Query AS nvarchar(MAX)
+
+SET @Query = N'SELECT * FROM (SELECT UPR00100.DepartmentId,
+		UPR00100.DepartmentName,
+		UPR00100.EMPLOYID,
+		UPR00100.EmployeeName,
+		UPR00100.JobTitle,
+		UPR00100.HireDate,
+		UPR30300.CHEKDATE,
+		UPR00100.PayRate,
+		CASE WHEN UPR00100.Hourly = 1 THEN ''Hourly'' ELSE ''Salary'' END AS PayType,
+		UPR00100.Inactive,
+		SUM(CASE WHEN UPR30300.PYRLRTYP IN (2, 4) THEN -1 ELSE 1 END * UPR30300.UPRTRXAM) AS GrossAmount
+FROM	UPR30300 
+		INNER JOIN View_AllEmployees UPR00100 ON UPR30300.EMPLOYID = UPR00100.EMPLOYID
+WHERE	UPR30300.CHEKDATE BETWEEN ''' + CONVERT(Char(10), @DateIni, 101) + ''' AND ''' + CONVERT(Char(10), @DateEnd, 101) + '''
+		AND UPR30300.PYRLRTYP = 1
+GROUP BY
+		UPR00100.DepartmentId,
+		UPR00100.JobTitle,
+		UPR00100.EMPLOYID,
+		UPR00100.EmployeeName,
+		UPR00100.PayRate,
+		UPR00100.DepartmentName,
+		UPR00100.Hourly,
+		UPR00100.HireDate,
+		UPR00100.Inactive,
+		UPR30300.CHEKDATE) RECS
+PIVOT	(SUM(GrossAmount) FOR CHEKDATE IN ('+ @CatPVT  + ')) AS Child'
+
+-- PRINT @Query
+
+EXECUTE sp_executesql @Query
+
+SELECT * FROM View_AllEmployees
+SELECT * FROM Dynamics.dbo.View_Companies ORDER BY Name
+SELECT * FROM UPR40600 WHERE PAYRCORD IN ('HOUR','SALARY')
+SELECT * FROM UPR00400 where employid = '41'

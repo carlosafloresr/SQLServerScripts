@@ -1,0 +1,1 @@
+UPDATE CustomerMaster SET Changed = 1, Trasmitted = 0 WHERE CompanyId = 'NDS'

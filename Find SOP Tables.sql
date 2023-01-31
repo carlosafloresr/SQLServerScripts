@@ -1,0 +1,18 @@
+DECLARE	@SopNumbe	Varchar(30)
+SET		@SopNumbe	= '96-07987'
+
+SELECT	*
+FROM	SOP10100
+WHERE	SopNumbe = @SopNumbe
+
+SELECT	*
+FROM	SOP30200
+WHERE	SopNumbe = @SopNumbe
+
+SELECT	*
+FROM	SOP30300
+WHERE	SopNumbe = @SopNumbe
+
+SELECT	*
+FROM	SOP10102
+WHERE	SopNumbe = @SopNumbe

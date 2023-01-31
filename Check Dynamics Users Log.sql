@@ -1,0 +1,6 @@
+SELECT	*
+FROM	SY05000
+WHERE	CMPNYNAM = 'Intermodal Cartage Company'
+		AND PRODNAME = 'Microsoft Dynamics GP'
+		AND DATE1 > '01/01/2014'
+ORDER BY DATE1

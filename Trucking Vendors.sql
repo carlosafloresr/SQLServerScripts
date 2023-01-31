@@ -1,0 +1,13 @@
+SELECT	VENDORID,
+		VENDNAME,
+		ADDRESS1,
+		ADDRESS2,
+		ADDRESS3,
+		CITY,
+		STATE,
+		ZIPCODE,
+		GPCustom.dbo.FormatPhoneNumber(PHNUMBR1) as PHNUMBR,
+		iif(VENDSTTS = 1, 'Active','Inactive') AS Status
+FROM	PM00200
+WHERE	VNDCLSID = 'TRD'
+order by 2

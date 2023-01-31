@@ -1,0 +1,5 @@
+-- 5select * from DYNAMICS..SY01402 where syDefaultType = '96' order by 1
+
+DECLARE @SYUSERDFSTR VARCHAR(500) = (SELECT SYUSERDFSTR FROM SY01402 WHERE USERID = 'kpowell' AND syDefaultType = '96')
+
+UPDATE SY01402 SET SYUSERDFSTR = @SYUSERDFSTR WHERE USERID = 'olgaf' AND syDefaultType = '96' 

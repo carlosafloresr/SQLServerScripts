@@ -1,0 +1,1 @@
+DELETE dbo.ReceivedIntegrations WHERE Integration = 'VMA'

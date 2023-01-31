@@ -1,0 +1,21 @@
+DECLARE	@Session_ID	INT
+DECLARE @VCHRNMBR	VARCHAR(30)
+
+SET @VCHRNMBR ='TIPAP0724181512'
+SET @Session_ID = (
+				SELECT	session_id 
+				FROM	tempdb..DEX_LOCK AS DEX_LOCK
+						INNER JOIN PM10000 AS ['PM Transaction WORK File'] ON ['PM Transaction WORK File'].DEX_ROW_ID = DEX_LOCK.row_id
+				WHERE	['PM Transaction WORK File'].VCHRNMBR = @VCHRNMBR
+				)
+
+IF @Session_ID IS NOT NULL
+BEGIN
+    DELETE FROM tempdb..DEX_LOCK WHERE session_id = @Session_ID
+
+    IF (SELECT COUNT(*) FROM tempdb..DEX_SESSION AS DEX_SESSION WHERE DEX_SESSION.session_id = @Session_ID) > 0
+        DELETE FROM tempdb..DEX_SESSION WHERE session_id = @Session_ID
+
+    IF(SELECT COUNT(*) FROM Dynamics..ACTIVITY ASACTIVITY WHERE SQLSESID = @Session_ID) = 0
+        DELETE DYNAMICS..ACTIVITY WHERE SQLSESID = @Session_ID
+END

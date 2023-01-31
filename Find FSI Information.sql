@@ -1,0 +1,20 @@
+/*
+SELECT	* 
+FROM	FSI_ReceivedDetails 
+WHERE	InvoiceNumber IN ('6-100053','6-100054','6-100055','6-100056','6-100057','6-100058','6-100059','6-100060','6-100061','6-100062')
+		AND BatchId = '4FSI100819_1118'
+ORDER BY
+		BatchId
+*/
+		
+SELECT	top 100 * 
+FROM	FSI_ReceivedSubDetails 
+WHERE	BatchId = '4FSI100819_1118'
+		AND DetailId IN (SELECT	DetailId
+					FROM	FSI_ReceivedDetails 
+					WHERE	InvoiceNumber IN ('6-100053','6-100054','6-100055','6-100056','6-100057','6-100058','6-100059','6-100060','6-100061','6-100062')
+							AND BatchId = '4FSI100819_1118')
+
+--SELECT * FROM FSI_ReceivedHeader WHERE BatchId IN ('16FSI091208_0925','4FSI100819_1118')
+
+1134444

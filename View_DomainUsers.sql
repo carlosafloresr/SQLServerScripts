@@ -1,0 +1,26 @@
+ALTER VIEW View_DomainUsers
+AS
+SELECT	[GivenName]
+		,[SN]
+		,[Mail]
+		,[Name]
+		,[DisplayName]
+		,[UserId]
+		,[Company]
+		,[TelephoneNumber]
+		,[Location]
+		,[Department]
+		,[Title]
+		,[PhysicalLocation]
+		,[State]
+		,[StreetAddress]
+		,[PostalCode]
+		,[Inactive]
+		,[TelephoneNumber2]
+		,[Mobile]
+		,[StrSID]
+		,[PwdLastSet]
+		,[PasswordExpiration]
+		,DATEDIFF(DD, GETDATE(), CAST(DATEADD(dd, 90, PwdLastSet) AS Date)) AS ExpirationDays
+		,CAST(DATEADD(dd, 90, PwdLastSet) AS Date) AS ExpirationDate
+FROM	[GPCustom].[dbo].[DomainUsers]

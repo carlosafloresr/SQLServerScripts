@@ -1,0 +1,39 @@
+/*
+PRINT dbo.GPNotesByInvoice('1009J','11-123332') 
+*/
+ALTER FUNCTION GPNotesByInvoice (@Customer Varchar(20), @Invoice Varchar(30))
+RETURNS Varchar(MAX)
+AS
+BEGIN
+	DECLARE @TblNotes TABLE (Note Varchar(1500))
+	DECLARE	@ReturnValue	Varchar(MAX) = '',
+			@Notes			Varchar(1500)
+
+	DECLARE Notes CURSOR LOCAL KEYSET OPTIMISTIC FOR
+	SELECT	RTRIM(CN3.Note_Display_String) AS Note
+	FROM	CN20100 CN2
+			INNER JOIN CN00100 CN3 ON CN2.NOTEINDX = CN3.NOTEINDX
+	WHERE	CN2.CUSTNMBR = RTRIM(@Customer) 
+			AND CN2.DOCNUMBR = RTRIM(@Invoice)
+	UNION
+	SELECT	RTRIM(CN3.Note_Display_String) AS Note
+	FROM	CN20100 CN2
+			INNER JOIN CN30100 CN3 ON CN2.NOTEINDX = CN3.NOTEINDX
+	WHERE	CN2.CUSTNMBR = RTRIM(@Customer) 
+			AND CN2.DOCNUMBR = RTRIM(@Invoice)
+
+	OPEN Notes
+	FETCH FROM Notes INTO @Notes
+
+	WHILE @@FETCH_STATUS = 0 
+	BEGIN
+		SET @ReturnValue = @ReturnValue + LTRIM(@Notes) + CHAR(13)
+
+		FETCH FROM Notes INTO @Notes
+	END
+
+	CLOSE Notes
+	DEALLOCATE Notes
+
+	RETURN @ReturnValue
+END

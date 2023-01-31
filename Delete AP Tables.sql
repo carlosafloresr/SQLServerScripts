@@ -1,0 +1,76 @@
+DELETE PM00400 WHERE CNTRLNUM IN (SELECT VCHRNMBR FROM PM10000 WHERE bachnumb = 'PD220523164702P')
+DELETE PM10100 WHERE VCHRNMBR IN (SELECT VCHRNMBR FROM PM10000 WHERE bachnumb = 'PD220523164702P')
+DELETE PM10000 WHERE bachnumb = 'PD220523164702P'
+DELETE PM80100 WHERE bachnumb = 'PD220523164702P'
+--DELETE PM10100 WHERE vchrnmbr LIKE 'DPY_%' AND DOCDATE = '08/23/2007'
+DELETE PM20000 WHERE vchrnmbr LIKE 'DPY_%' AND DOCDATE = '08/23/2007'
+DELETE PM30200 WHERE vchrnmbr LIKE 'DPY_%' AND DOCDATE = '08/23/2007'
+DELETE PM00400 WHERE cntrlnum LIKE 'DPY_%' AND DOCDATE = '08/23/2007'
+--SELECT * FROM PM00400
+
+DELETE GPCUSTOM.DBO.Integration_APDetails WHERE BATCHID = '4_DPY_20070818'
+DELETE GPCUSTOM.DBO.Integration_APHeader WHERE BATCHID = '4_DPY_20070818'
+
+SELECT * FROM PM20000
+SELECT * FROM AIS.DBO.PM20200
+SELECT * FROM AIS.DBO.PM10100
+SELECT * FROM PM10000
+SELECT * FROM AIS.DBO.PM30600
+
+-- HISTORIC AP
+SELECT 	PD.DocType,
+	PD.VchrNmbr,
+	DocDate,
+	DocNumbr,
+	DstSqNum,
+	CrdtAmnt,
+	DebitAmt,
+	DstIndx,
+	DistType,
+	PD.VendorId,
+	DistRef
+FROM 	AIS.DBO.PM30600 PD
+	INNER JOIN PM30200 PH ON PD.VchrNmbr = PH.VchrNmbr
+WHERE 	DstIndx IN (SELECT AccountIndex FROM GPCustom.dbo.EscrowAccounts WHERE CompanyId = 'AIS') AND
+	PD.VchrNmbr NOT IN (SELECT VoucherNumber FROM GPCustom.dbo.EscrowTransactions WHERE CompanyId = 'AIS')
+UNION
+-- WORK AP
+SELECT 	DocType,
+	PD.VchrNmbr,
+	DocDate,
+	DocNumbr,
+	DstSqNum,
+	CrdtAmnt,
+	DebitAmt,
+	DstIndx,
+	DistType,
+	PD.VendorId,
+	DistRef
+FROM 	AIS.DBO.PM10100 PD
+	INNER JOIN PM10000 PH ON PD.VchrNmbr = PH.VchNumWk
+WHERE 	DstIndx IN (SELECT AccountIndex FROM GPCustom.dbo.EscrowAccounts WHERE CompanyId = 'AIS') AND
+	PD.VchrNmbr NOT IN (SELECT VoucherNumber FROM GPCustom.dbo.EscrowTransactions WHERE CompanyId = 'AIS')
+UNION
+-- OPEN AP
+SELECT 	PD.DocType,
+	PD.VchrNmbr,
+	DocDate,
+	DocNumbr,
+	DstSqNum,
+	CrdtAmnt,
+	DebitAmt,
+	DstIndx,
+	DistType,
+	VendorId,
+	'' AS DistRef
+FROM 	AIS.DBO.PM20200 PD
+	INNER JOIN PM20000 PH ON PD.VchrNmbr = PH.VchrNmbr
+WHERE 	DstIndx IN (SELECT AccountIndex FROM GPCustom.dbo.EscrowAccounts WHERE CompanyId = 'AIS') AND
+	PD.VchrNmbr NOT IN (SELECT VoucherNumber FROM GPCustom.dbo.EscrowTransactions WHERE CompanyId = 'AIS')
+
+DELETE PM10100 WHERE VchrNmbr NOT IN (SELECT VchNumWk FROM PM10000)
+
+SELECT * FROM EscrowAccounts
+SELECT * FROM EscrowTransactions
+
+select * from PM10100 WHERE VchrNmbr = 'OOSA0147092707068'

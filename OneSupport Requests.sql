@@ -1,0 +1,44 @@
+/*
+SELECT	WOS.*
+FROM	WorkOrder WO
+		INNER JOIN WorkOrderStates WOS ON WO.WORKORDERID = WOS.WORKORDERID
+WHERE	WO.WorkOrderId = 7992
+*/
+SELECT	*
+FROM	WorkOrder WO
+		LEFT JOIN WorkOrderStates WOS ON WO.WORKORDERID = WOS.WORKORDERID
+WHERE	wos.OWNERID = 715
+		AND ((WO.WorkOrderId > 1 AND WOS.StatusID = 4) OR WO.WorkOrderId IN (7383, 17734))
+
+/*
+UPDATE	WorkOrderStates
+SET		WorkOrderStates.StatusID = 4
+WHERE	WorkOrderId IN (
+						SELECT	WO.WorkOrderId
+						FROM	WorkOrder WO
+								LEFT JOIN WorkOrderStates WOS ON WO.WORKORDERID = WOS.WORKORDERID
+						WHERE	wos.OWNERID = 715
+								AND WO.WorkOrderId > 1
+								AND WOS.StatusID <> 4)
+
+STATUS:
+2 = ON HOLD
+3 = CLOSED (User Acknowledgement)
+4 = CLOSED (Without Requester's Acknowledgement)
+
+
+SELECT	WorkOrder.WORKORDERID,WorkOrder.REQUESTERID,WorkOrder.CREATEDBYID,WorkOrder.CREATEDTIME,WorkOrder.RESPONDEDTIME,WorkOrder.DUEBYTIME,WorkOrder.COMPLETEDTIME,WorkOrder.TIMESPENTONREQ,WorkOrder.TITLE,WorkOrder.DESCRIPTION,WorkOrder.MODEID,WorkOrder.SLAID,WorkOrder.WORKSTATIONID,WorkOrder.DEPTID,WorkOrder.SITEID,WorkOrder.AUTOCLOSETIME,WorkOrder.CLOSEAUTHKEY,WorkOrder.ISPARENT,WorkOrder.TEMPLATEID,WorkOrder.SERVICEID,WorkOrder.IS_CATALOG_TEMPLATE,WorkOrder.FR_DUETIME,WorkOrder.HASCHANGE,WorkOrder.HASPROBLEM,WorkOrder.SURVEYSTATUS,WorkOrder.HASREMINDER,WorkOrder.HASDRAFT,WorkOrderStates.WORKORDERID,WorkOrderStates.CATEGORYID,WorkOrderStates.SUBCATEGORYID,WorkOrderStates.ITEMID,WorkOrderStates.OWNERID,WorkOrderStates.ASSIGNEDTIME,WorkOrderStates.STATUSID,WorkOrderStates.PRIORITYID,WorkOrderStates.LEVELID,WorkOrderStates.ISOVERDUE,WorkOrderStates.ISESCALATED,WorkOrderStates.ISREAD,WorkOrderStates.SHOWNOTESTOTECH,WorkOrderStates.NOTIFICATIONSTATUS,WorkOrderStates.REQAPPROVAL,WorkOrderStates.APPR_STATUSID,WorkOrderStates.IMPACTID,WorkOrderStates.IMPACTDETAILS,WorkOrderStates.URGENCYID,WorkOrderStates.REQUESTTYPEID,WorkOrderStates.REOPENED,WorkOrderStates.CLOSEACCEPTED,WorkOrderStates.CLOSE_COMMENTS,WorkOrderStates.HASATTACHMENT,WorkOrderStates.IS_FR_OVERDUE,WorkOrderStates.HASLINKEDREQUEST,WorkOrderStates.LINKEDWORKORDERID,WorkOrderStates.CLOSURECODEID,WorkOrderStates.CLOSURECOMMENTS,WorkOrderStates.EMAIL_CC,WorkOrderToDescription.WORKORDERID,WorkOrderToDescription.FULLDESCRIPTION,WorkOrder_Fields.WORKORDERID,WorkOrder_Fields.UDF_CHAR1,WorkOrder_Fields.UDF_CHAR2,WorkOrder_Fields.UDF_CHAR3,WorkOrder_Fields.UDF_CHAR4,WorkOrder_Fields.UDF_CHAR5,WorkOrder_Fields.UDF_CHAR6,WorkOrder_Fields.UDF_CHAR7,WorkOrder_Fields.UDF_CHAR8,WorkOrder_Fields.UDF_CHAR9,WorkOrder_Fields.UDF_CHAR10,WorkOrder_Fields.UDF_CHAR11,WorkOrder_Fields.UDF_CHAR12,WorkOrder_Fields.UDF_CHAR13,WorkOrder_Fields.UDF_CHAR14,WorkOrder_Fields.UDF_CHAR15,WorkOrder_Fields.UDF_LONG1,WorkOrder_Fields.UDF_DATE1,WorkOrder_Fields.UDF_DATE2,WorkOrder_Threaded.THD_WOID,WorkOrder_Threaded.WORKORDERID,RequestResolution.REQUESTID,RequestResolution.RESOLUTION,RequestResolution.LASTUPDATEDTIME,RequestResolver.REQUESTID,RequestResolver.TECHNICIANID,WorkOrder_Queue.WORKORDERID,WorkOrder_Queue.QUEUEID,WorkOrder_Queue.CREATEDTIME,WorkOrder_Queue.ISESCALATED,RequestCharges.REQUESTCHARGEID,RequestCharges.WORKORDERID,RequestCharges.OWNERID,RequestCharges.DESCRIPTION,RequestCharges.HH2COMPLETEREQUEST,RequestCharges.MM2COMPLETEREQUEST,RequestCharges.AMOUNT,RequestCharges.DATETIME,RequestCharges.EXECUTEDTIME,WORKORDER_CALLBACK.WORKORDERID,WORKORDER_CALLBACK.CALLBACKURL 
+FROM	WorkOrder 
+		INNER JOIN WorkOrderStates ON WorkOrder.WORKORDERID=WorkOrderStates.WORKORDERID 
+		LEFT JOIN WorkOrderToDescription ON WorkOrder.WORKORDERID=WorkOrderToDescription.WORKORDERID 
+		LEFT JOIN WorkOrder_Fields ON WorkOrder.WORKORDERID=WorkOrder_Fields.WORKORDERID 
+		LEFT JOIN WorkOrder_Threaded ON WorkOrder.WORKORDERID=WorkOrder_Threaded.THD_WOID 
+		LEFT JOIN RequestResolution ON WorkOrder.WORKORDERID=RequestResolution.REQUESTID 
+		LEFT JOIN RequestResolver ON WorkOrder.WORKORDERID=RequestResolver.REQUESTID 
+		LEFT JOIN WorkOrder_Queue ON WorkOrder.WORKORDERID=WorkOrder_Queue.WORKORDERID 
+		LEFT JOIN RequestCharges ON WorkOrder.WORKORDERID=RequestCharges.WORKORDERID 
+		LEFT JOIN WORKORDER_CALLBACK ON WorkOrder.WORKORDERID=WORKORDER_CALLBACK.WORKORDERID 
+WHERE  (WorkOrder.WORKORDERID > 10000)
+
+SELECT WorkOrder.WORKORDERID,Notification.NOTIFICATIONID,Notification.NOTIFICATIONDESCRIPTION,Notification.NOTIFICATIONTITLE,Notification.NOTIFICATIONDATE,Notification.SENDERID,Notification.RECIPIENTID,Notification.MESSAGEID,Notification.NOTIFICATIONTYPE FROM Notification LEFT JOIN Notify_WorkOrder ON Notification.NOTIFICATIONID=Notify_WorkOrder.NOTIFICATIONID LEFT JOIN WorkOrder ON Notify_WorkOrder.WORKORDERID=WorkOrder.WORKORDERID WHERE  ((Notify_WorkOrder.WORKORDERID = 12061) AND (((Notification.NOTIFICATIONTYPE LIKE N'REQREPLY' COLLATE SQL_Latin1_General_CP1_CI_AS) OR (Notification.NOTIFICATIONTYPE = N'ADDCONVERSATION' COLLATE SQL_Latin1_General_CP1_CI_AS)) OR (Notification.NOTIFICATIONTYPE LIKE N'REQFORWARD' COLLATE SQL_Latin1_General_CP1_CI_AS)))  ORDER BY 5
+*/

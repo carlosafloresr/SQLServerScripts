@@ -1,0 +1,21 @@
+SELECT	*
+FROM	SY06000
+WHERE	VENDORID LIKE '15115%'--15'
+
+select	*
+from	pm00200
+where	VENDORID = '15115'
+
+update	pm00200
+set		VADCDPAD = 'MAIN',
+		VADCDSFR = 'MAIN',
+		VADCDTRO = 'MAIN'
+where	VENDORID = '15115'
+
+UPDATE	SY06000
+SET		ADRSCODE = 'MAIN',
+		EFTUSEMASTERID = 1,
+		BANKNAME = 'Bank Name',
+		eftprenotedate = '08/19/2022',
+		eftbankacct = '400947862'
+WHERE	VENDORID = '15115'

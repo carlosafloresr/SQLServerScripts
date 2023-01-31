@@ -1,0 +1,6 @@
+SELECT	UserId, 
+		CmpnyNam, 
+		CAST(LOGINDAT AS Date) AS LoginDate,
+		CONVERT(Varchar, LOGINTIM, 14) AS LoginTime
+FROM	DYNAMICS.dbo.ACTIVITY
+ORDER BY 4, UserId

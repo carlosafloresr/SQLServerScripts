@@ -1,0 +1,3 @@
+TRUNCATE TABLE FSI_ReceivedSubDetails
+TRUNCATE TABLE FSI_ReceivedDetails
+TRUNCATE TABLE FSI_ReceivedHeader

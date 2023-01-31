@@ -1,0 +1,1 @@
+EXECUTE GPCustom.dbo.USP_QuerySWS 'SELECT A.btref, B.ddate, B.dtime, C.frtchg AS Freight, C.fscamt AS FSC, A.total, B.Eq_Code FROM trk.invoice A INNER JOIN trk.order C ON A.or_no = C.no LEFT JOIN trk.drpay B ON A.code = B.inv_code AND A.cnlp_code = B.dlp_code WHERE A.cmpy_no = 1 AND A.code=''9-192035'''

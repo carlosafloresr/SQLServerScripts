@@ -1,0 +1,11 @@
+SELECT 	* 
+FROM 	AIS.DBO.View_Escrow_Missing EM
+	LEFT JOIN EscrowTransactions ET ON EM.VchrNmbr = ET.VoucherNumber AND DstSqNum = ItemNumber
+ORDER BY EM.VchrNmbr
+
+--SELECT * FROM EscrowTransactions
+
+SELECT * FROM AIS.DBO.PM30600 WHERE DstIndx IN (67,68,69,70) ORDER BY VchrNmbr
+SELECT * FROM AIS.DBO.PM10100 WHERE DstIndx IN (67,68,69,70) ORDER BY VchrNmbr
+SELECT * FROM AIS.DBO.PM20200 WHERE DstIndx IN (67,68,69,70) ORDER BY VchrNmbr
+PM20200

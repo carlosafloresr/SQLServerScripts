@@ -1,0 +1,48 @@
+/*
+EXECUTE USP_GPVendors 'GIS'
+*/
+ALTER PROCEDURE USP_GPVendors
+		@Company	Varchar(5)
+AS
+DECLARE	@Query		Varchar(MAX)
+
+SET @Query = N'SELECT	''' + @Company + ''' AS Company,
+		RTRIM(PM2.VENDORID) AS VENDORID,
+		RTRIM(PM2.VNDCLSID) AS VNDCLSID,
+		PM2.VENDSTTS,
+		CASE WHEN PM2.VENDSTTS = 1 THEN ''Active'' ELSE ''Inactive'' END AS VENDSTATUS,
+		RTRIM(PM2.VENDNAME) AS VENDNAME,
+		RTRIM(PM2.VNDCHKNM) AS VNDCHKNM,
+		RTRIM(PM2.ADDRESS1) AS ADDRESS1,
+		RTRIM(PM2.ADDRESS2) AS ADDRESS2,
+		RTRIM(PM2.ADDRESS3) AS ADDRESS3,
+		RTRIM(PM2.CITY) AS CITY,
+		RTRIM(PM2.STATE) AS STATE,
+		RTRIM(PM2.ZIPCODE) AS ZIPCODE,
+		PM2.PHNUMBR1,
+		PM2.PHNUMBR2,
+		PM2.FAXNUMBR,
+		SY6.EFTBankAcct,
+		SY6.EFTBankType,
+		SY1.SQL_MSG,
+		SY6.EFTTransitRoutingNo,
+		ISNULL(SY6.EFTAccountType, 0) AS EFTAccountType,
+		CASE SY6.EFTAccountType 
+			 WHEN 1 THEN ''Checking''
+			 WHEN 2 THEN ''Savings''
+			 WHEN 3 THEN ''General Ledger''
+			 WHEN 4 THEN ''Loan'' 
+			 ELSE ''Non EFT'' END AS EFT_AccountType,
+		SY6.EFTTransferMethod,
+		CASE SY6.EFTTransferMethod 
+			 WHEN 2 THEN ''Business Account''
+			 WHEN 3 THEN ''Corporate Account''
+			 WHEN 4 THEN ''Personal Account''
+			 WHEN 5 THEN ''Foreign Account''
+		ELSE ''Not Specified'' END AS EFT_TransferMethod 
+FROM	' + @Company + '.dbo.PM00200 PM2
+		LEFT JOIN ' + @Company + '.dbo.SY06000 SY6 ON PM2.VENDORID = SY6.VENDORID
+		LEFT JOIN DYNAMICS.dbo.SY10997 SY1 ON SY1.Field_ResID = ''6843'' AND SY6.EFTBankType = SY1.FUNCENUM
+ORDER BY PM2.VENDORID'
+
+EXECUTE(@Query)

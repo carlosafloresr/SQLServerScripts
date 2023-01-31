@@ -1,0 +1,1 @@
+SELECT * FROM EscrowTransactions WHERE CompanyId = 'GIS' AND AccountNumber = '0-00-2790' AND Amount < 0 AND PostingDate > '4/13/2010'

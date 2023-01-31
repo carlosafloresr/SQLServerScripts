@@ -1,0 +1,1 @@
+UPDATE FSI_ReceivedDetails SET CustomerNumber = '5942' WHERE CustomerNumber = 'PD5942'

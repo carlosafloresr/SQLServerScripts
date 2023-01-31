@@ -1,0 +1,5 @@
+USE GPCustom
+GO
+
+CREATE INDEX IX_tmpGL20000_Refrence ON tmpGL20000 (Refrence)
+CREATE INDEX IX_tmpGL30000_Refrence ON tmpGL30000 (Refrence)

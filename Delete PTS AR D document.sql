@@ -1,0 +1,4 @@
+select	*
+from	RM00401
+
+DELETE PTS.dbo.RM00401 WHERE DOCNUMBR = 'D'

@@ -1,0 +1,1 @@
+SELECT SUM(TrxAmnt) FROM CM20200 WHERE ChekBkId = 'DRIV' AND PostEdDt = '4/1/2010' AND Voided = 0 order by cmlINKid

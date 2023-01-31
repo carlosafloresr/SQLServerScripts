@@ -1,0 +1,29 @@
+/*
+SELECT * FROM View_ActiveUsers
+*/
+ALTER VIEW View_ActiveUsers
+AS
+SELECT	A.USERID,
+		A.CMPNYNAM COMPANY_NAME,
+		INTERID COMPANY_ID,
+		LOGINDAT + LOGINTIM LOGIN_DATE_TIME,
+		SQLSESID SQL_SESSIONID,
+		CASE WHEN S.session_id IS NULL THEN 1 ELSE 0 END MISSING_SESSION,
+		--CASE WHEN DATEDIFF(mi, P.last_batch, GETDATE()) > 1 THEN 'Idle for ' + LTRIM(RTRIM(STR(DATEDIFF(mi, P.last_batch, GETDATE())))) + ' minutes.' ELSE '' END AS IDLE_TIME_DESC,
+		CASE WHEN DATEDIFF(mi, P.last_batch, GETDATE()) > 1 THEN DATEDIFF(mi, P.last_batch, GETDATE()) ELSE 0 END AS IDLE_TIME,
+		P.login_time SQL_LOGINTIME,
+		P.last_batch SQL_LAST_BATCH,
+		DATEDIFF(mi, P.last_batch, GETDATE()) TIME_SINCE_LAST_ACTION,
+		S.session_id SQLSERVER_SESSIONID,
+		S.sqlsvr_spid SQLSERVER_PROCESSID,
+		P.spid PROCESSID,
+		P.status PROCESS_STATUS,
+		P.net_address NET_ADDRESS,
+		P.dbid DATABASE_ID,
+		P.hostname HOSTNAME
+FROM	DYNAMICS.dbo.ACTIVITY A
+		LEFT JOIN DYNAMICS.dbo.SY01400 U ON A.USERID = U.USERID
+		LEFT JOIN DYNAMICS.dbo.SY01500 C ON A.CMPNYNAM = C.CMPNYNAM
+		LEFT JOIN tempdb.dbo.DEX_SESSION S ON A.SQLSESID = S.session_id
+		LEFT JOIN master.dbo.sysprocesses P ON S.sqlsvr_spid = P.spid AND ecid = 0
+		LEFT JOIN master.dbo.sysdatabases D ON P.dbid = D.dbid

@@ -1,0 +1,68 @@
+CREATE VIEW View_GL_Searchable
+AS
+SELECT	G.OPENYEAR Fiscal_Year,
+		g.JRNENTRY JE,
+		CASE WHEN g.CRDTAMNT <> 0 THEN g.CRDTAMNT ELSE g.DEBITAMT END Amount,
+		g.DEBITAMT Debit_Amount,
+		g.CRDTAMNT Credit_Amount,
+		a.ACTNUMST Account_Number,
+		d.ACTDESCR Account_Description,
+		g.SOURCDOC Source_Doc,
+		g.REFRENCE Reference,
+		g.DSCRIPTN [Description],
+		g.TRXDATE Trx_Date,
+		g.TRXSORCE Transaction_Source,
+		g.LASTUSER Last_User,
+		g.LSTDTEDT Last_Edited,
+		g.USWHPSTD User_Who_Posted,
+		g.ORGNTSRC Batch_Number,
+		CASE g.SERIES
+			 WHEN 1 THEN 'All'
+			 WHEN 2 THEN 'Financial'
+			 WHEN 3 THEN 'Sales'
+			 WHEN 4 THEN 'Purchasing'
+			 WHEN 5 THEN 'Inventory'
+			 WHEN 6 THEN 'Payroll – USA'
+			 WHEN 7 THEN 'Project'
+			 WHEN 10 THEN '3rd Party'
+			 ELSE '' END Series,
+		g.ORTRXTYP Originating_Trx_Type,
+		g.ORCTRNUM Originating_Control_Number,
+		g.ORMSTRID Originating_Master_ID,
+		g.ORMSTRNM Originating_Master_Name,
+		g.ORDOCNUM Originating_Doc_Number,
+		g.ORPSTDDT Originating_Posted_Date,
+		g.ORTRXSRC Originating_Trx_Source,
+		g.CURNCYID Currency_ID,
+		CASE g.ICTRX WHEN 1 THEN 'Yes' ELSE 'No' END Intercompany,
+		g.ORCOMID Originating_Company_ID,
+		g.ORIGINJE Originating_JE,
+		g.ORCRDAMT Originating_Credit_Amount,
+		g.ORDBTAMT Originating_Debit_Amount,
+		CASE WHEN g.ORCRDAMT <> 0 THEN g.ORCRDAMT ELSE g.ORDBTAMT END Originating_Amount,
+		CASE g.VOIDED WHEN 0 THEN 'No' ELSE 'Yes' END Voided,
+		CAST(DATEADD(hour, -4, g.DEX_ROW_TS) as date) EDT_Date_Stamp,
+		CAST(CAST(DATEADD(hour,-4,g.DEX_ROW_TS) as time) as char(5)) EDT_Time_Stamp,
+		ISNULL(n.TXTFIELD,'') Note 
+FROM	(SELECT	OPENYEAR, JRNENTRY, SOURCDOC,
+				REFRENCE, DSCRIPTN, TRXDATE, TRXSORCE,
+				ACTINDX, LASTUSER, LSTDTEDT, USWHPSTD,
+				ORGNTSRC, SERIES, ORTRXTYP, ORCTRNUM,
+				ORMSTRID, ORMSTRNM, ORDOCNUM, ORPSTDDT,
+				ORTRXSRC, CURNCYID, NOTEINDX, ICTRX,
+				ORCOMID, ORIGINJE, CRDTAMNT, DEBITAMT,
+				ORCRDAMT, ORDBTAMT, VOIDED, DEX_ROW_TS
+		FROM	GL20000
+		UNION
+		SELECT	HSTYEAR, JRNENTRY, SOURCDOC,
+				REFRENCE, DSCRIPTN, TRXDATE, TRXSORCE,
+				ACTINDX, LASTUSER, LSTDTEDT, USWHPSTD,
+				ORGNTSRC, SERIES, ORTRXTYP, ORCTRNUM,
+				ORMSTRID, ORMSTRNM, ORDOCNUM, ORPSTDDT,
+				ORTRXSRC, CURNCYID, NOTEINDX, ICTRX,
+				ORCOMID, ORIGINJE, CRDTAMNT, DEBITAMT,
+				ORCRDAMT, ORDBTAMT, VOIDED, DEX_ROW_TS
+		FROM	GL30000) G
+		LEFT OUTER JOIN SY03900 N ON G.NOTEINDX = N.NOTEINDX
+		LEFT OUTER JOIN GL00105 A ON G.ACTINDX = A.ACTINDX
+		LEFT OUTER JOIN GL00100 D ON G.ACTINDX = D.ACTINDX

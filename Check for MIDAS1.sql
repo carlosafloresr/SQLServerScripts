@@ -1,0 +1,14 @@
+SELECT	*
+FROM	Repairs
+WHERE	tablet = 'HH035'
+--equipment = 'EMCZ640418'
+
+SELECT	*
+FROM	RepairsDetails
+WHERE	Fk_RepairId = 156020
+
+/*
+EXECUTE USP_RetrieveRepairsPictures 1244175
+*/
+
+-- UPDATE REPAIRS SET TABLET='HH125',WORKORDER='HH125-00205' WHERE RepairId = 156020

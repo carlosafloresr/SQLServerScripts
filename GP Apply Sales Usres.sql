@@ -1,0 +1,11 @@
+SELECT	SY.USERID AS UserId,
+		CO.InterId AS Company,
+		CO.CmpnyNam AS CompanyName
+FROM	SY10500 SY
+		INNER JOIN View_AllCompanies CO ON SY.CMPANYID = CO.CmpanyId
+WHERE	SY.SECURITYROLEID = 'AR APPLY SALES'
+		AND CO.CmpnyNam NOT LIKE '%ARCHIVE%'
+		AND CO.CmpnyNam NOT LIKE '%HOLDING%'
+		AND CO.CmpnyNam NOT LIKE '%Histo%'
+		AND CO.CmpnyNam NOT LIKE '%consolid%'
+ORDER BY 1,2

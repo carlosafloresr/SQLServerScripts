@@ -1,0 +1,168 @@
+SELECT	CUSTNMBR,
+		[STMTNAME],
+		[ADRSCODE],
+		[CHEKBKID],
+		[CRLMTAMT],
+		[CRLMTTYP],
+		[MXWOFTYP],
+		[MXWROFAM],
+		[TAXEXMT1],
+		[TAXEXMT2],
+		[TXRGNNUM],
+		[STMTCYCL]
+FROM	AIS.dbo.RM00101
+/*
+[STMTNAME] [char](65) NOT NULL,
+[ADRSCODE] [char](15) NOT NULL,
+[CHEKBKID] [char](15) NOT NULL,
+[CRLMTAMT] [numeric](19, 5) NOT NULL,
+[CRLMTTYP] [smallint] NOT NULL,
+[MXWOFTYP] [smallint] NOT NULL,
+[MXWROFAM] [numeric](19, 5) NOT NULL,
+[TAXEXMT1] [char](25) NOT NULL,
+[TAXEXMT2] [char](25) NOT NULL,
+[TXRGNNUM] [char](25) NOT NULL,
+[STMTCYCL] [smallint] NOT NULL,
+*/
+
+ALTER TABLE CustomerMaster
+ADD STMTNAME Varchar(65)
+CONSTRAINT CustomerMaster_STMTNAME DEFAULT ''
+GO
+
+ALTER TABLE CustomerMaster
+ADD ADRSCODE Varchar(15)
+CONSTRAINT CustomerMaster_ADRSCODE DEFAULT ''
+GO
+
+ALTER TABLE CustomerMaster
+ADD CHEKBKID Varchar(15)
+CONSTRAINT CustomerMaster_CHEKBKID DEFAULT ''
+GO
+
+ALTER TABLE CustomerMaster
+ADD CRLMTAMT Numeric(12,2)
+CONSTRAINT CustomerMaster_CRLMTAMT DEFAULT 0
+GO
+
+ALTER TABLE CustomerMaster
+ADD CRLMTTYP Smallint
+CONSTRAINT CustomerMaster_CRLMTTYP DEFAULT 0
+GO
+
+ALTER TABLE CustomerMaster
+ADD MXWOFTYP Smallint
+CONSTRAINT CustomerMaster_MXWOFTYP DEFAULT 0
+GO
+
+ALTER TABLE CustomerMaster
+ADD MXWROFAM Numeric(12,2)
+CONSTRAINT CustomerMaster_MXWROFAM DEFAULT 0
+GO
+
+ALTER TABLE CustomerMaster
+ADD TAXEXMT1 Varchar(25)
+CONSTRAINT CustomerMaster_TAXEXMT1 DEFAULT ''
+GO
+
+ALTER TABLE CustomerMaster
+ADD TAXEXMT2 Varchar(25)
+CONSTRAINT CustomerMaster_TAXEXMT2 DEFAULT ''
+GO
+
+ALTER TABLE CustomerMaster
+ADD TXRGNNUM Varchar(25)
+CONSTRAINT CustomerMaster_TXRGNNUM DEFAULT ''
+GO
+
+ALTER TABLE CustomerMaster
+ADD STMTCYCL Smallint
+CONSTRAINT CustomerMaster_STMTCYCL DEFAULT 0
+GO
+
+----- NEW FIELDS
+
+ALTER TABLE CustomerMaster
+ADD BALNCTYP Smallint
+
+ALTER TABLE CustomerMaster
+ADD BANKNAME Varchar(31)
+
+ALTER TABLE CustomerMaster
+ADD BNKBRNCH Varchar(21)
+
+ALTER TABLE CustomerMaster
+ADD COMMENT1 Varchar(31)
+
+ALTER TABLE CustomerMaster
+ADD COMMENT2 Varchar(31)
+
+ALTER TABLE CustomerMaster
+ADD USERDEF1 Varchar(21)
+
+ALTER TABLE CustomerMaster
+ADD USERDEF2 Varchar(21)
+
+ALTER TABLE CustomerMaster
+ADD COUNTRY Varchar(61)
+
+ALTER TABLE CustomerMaster
+ADD CPRCSTNM Varchar(15)
+
+ALTER TABLE CustomerMaster
+ADD CRLMTPAM Numeric(19,5)
+
+ALTER TABLE CustomerMaster
+ADD CRLMTPER Smallint
+
+ALTER TABLE CustomerMaster
+ADD CURNCYID Varchar(15)
+
+ALTER TABLE CustomerMaster
+ADD CUSTDISC Smallint
+
+ALTER TABLE CustomerMaster
+ADD FAX Varchar(21)
+
+ALTER TABLE CustomerMaster
+ADD PHONE2 Varchar(21)
+
+ALTER TABLE CustomerMaster
+ADD PHONE3 Varchar(21)
+
+ALTER TABLE CustomerMaster
+ADD FNCHATYP Smallint
+
+ALTER TABLE CustomerMaster
+ADD FNCHPCNT Smallint
+
+ALTER TABLE CustomerMaster
+ADD FINCHDLR Numeric(19,5)
+
+ALTER TABLE CustomerMaster
+ADD MINPYTYP Smallint
+
+ALTER TABLE CustomerMaster
+ADD MINPYDLR Numeric(19,5)
+
+ALTER TABLE CustomerMaster
+ADD MINPYPCT Smallint
+
+ALTER TABLE CustomerMaster
+ADD PRBTADCD Varchar(15)
+
+ALTER TABLE CustomerMaster
+ADD PRSTADCD Varchar(15)
+
+ALTER TABLE CustomerMaster
+ADD PRCLEVEL Varchar(11)
+
+ALTER TABLE CustomerMaster
+ADD SHRTNAME Varchar(15)
+
+ALTER TABLE CustomerMaster
+ADD STADDRCD Varchar(15)
+
+
+SELECT	TOP 100 *
+FROM	CustomerMaster

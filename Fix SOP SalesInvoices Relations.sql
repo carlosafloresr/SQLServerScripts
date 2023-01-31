@@ -1,0 +1,32 @@
+SELECT	SO2.BACHNUMB
+		,SO2.SOPNUMBE
+		,SO2.CUSTNMBR
+		,SO1.LNITMSEQ
+		,SO1.ITEMNMBR
+		,SO1.UNITPRCE
+		,SAL.InvoiceNumber
+		,SAL.ItemCode
+		,SAL.RecordType
+		,SAL.ItemLine
+		,SO2.GLPOSTDT
+		,SAL.CreatedOn
+		,SAL.SalesInvoiceId
+FROM	SOP30300 SO1
+		INNER JOIN SOP30200 SO2 ON SO1.SOPNUMBE = SO2.SOPNUMBE
+		LEFT JOIN GPCustom.dbo.SalesInvoices SAL ON SO1.SOPNUMBE = SAL.InvoiceNumber AND SO2.CUSTNMBR = SAL.CustomerId AND (SO1.LNITMSEQ = SAL.ItemLine OR SAL.ItemLine = 0) AND SAL.CompanyId = DB_NAME()
+WHERE	SO1.ITEMNMBR IN ('DM','PD')
+		AND SO2.GLPOSTDT >= GETDATE() - 5
+
+--SELECT	*
+--FROM	GPCustom.dbo.SalesInvoices
+--WHERE	CompanyId = DB_NAME()
+--		AND InvoiceNumber = '96-60523'
+/*
+SELECT	*
+FROM	SOP30300
+WHERE	SOPNUMBE = '96-60523'
+
+UPDATE	GPCustom.dbo.SalesInvoices
+SET		ItemLine = 16384
+WHERE	SalesInvoiceId = 23033
+*/

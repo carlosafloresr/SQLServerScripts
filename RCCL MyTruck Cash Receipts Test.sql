@@ -1,0 +1,4 @@
+SELECT * FROM RM20101 WHERE BachNumb = 'IMC_CSH_101509' ORDER BY DocNumbr
+SELECT * FROM GPCustom.dbo.CarlosTemp
+EXECUTE GPCustom.dbo.USP_CashReceiptGreatPlainsRCCL 'IMC_CSH_101509', 10
+--SELECT * FROM GPCustom.dbo.CashReceiptRCCL WHERE BatchId = 'IMC_CSH_101509'

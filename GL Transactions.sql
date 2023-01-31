@@ -1,0 +1,2 @@
+SELECT * FROM GL10000
+select * from GL10002

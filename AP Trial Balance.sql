@@ -1,0 +1,26 @@
+DECLARE	@ExecutionDate	Date = '06/30/2018'
+
+SELECT	*
+FROM	(
+		SELECT	VM.VENDORID Vendor_ID, 
+				VM.VENDNAME Vendor_Name,
+				VM.VNDCLSID Vendor_Class, 
+				VM.PYMTRMID Vendor_Terms,
+				SUM(CASE WHEN P.DOCTYPE < 4 THEN P.CURTRXAM ELSE P.CURTRXAM * -1 END) Unapplied_Amount,
+				SUM(CASE WHEN DATEDIFF(d, P.DUEDATE, @ExecutionDate) < 31 and P.DOCTYPE < 4 THEN P.CURTRXAM WHEN DATEDIFF(d, P.DOCDATE, @ExecutionDate) < 31 and P.DOCTYPE > 3 THEN P.CURTRXAM * -1 ELSE 0 END) [Current],
+				SUM(CASE WHEN DATEDIFF(d, P.DUEDATE, @ExecutionDate) between 31 and 60 and P.DOCTYPE < 4 THEN P.CURTRXAM WHEN DATEDIFF(d, P.DOCDATE, @ExecutionDate) between 31 and 60 and P.DOCTYPE > 3 THEN P.CURTRXAM * -1 ELSE 0 END) [31_to_60_Days],
+				SUM(CASE WHEN DATEDIFF(d, P.DUEDATE, @ExecutionDate) between 61 and 90 and P.DOCTYPE < 4 THEN P.CURTRXAM WHEN DATEDIFF(d, P.DOCDATE, @ExecutionDate) between 61 and 90 and P.DOCTYPE > 3 THEN P.CURTRXAM * -1 ELSE 0 END) [61_to_90_Days],
+				SUM(CASE WHEN DATEDIFF(d, P.DUEDATE, @ExecutionDate) > 90 and P.DOCTYPE < 4 THEN P.CURTRXAM WHEN DATEDIFF(d, P.DOCDATE, @ExecutionDate) > 90 and P.DOCTYPE > 3 THEN P.CURTRXAM * -1 ELSE 0 END) [91_and_Over]
+		FROM	PM00200 VM
+				INNER JOIN PM20000 P ON P.VENDORID = VM.VENDORID
+		WHERE	VOIDED = 0
+				--AND P.CURTRXAM <> 0 
+				AND VM.VNDCLSID = 'DRV'
+		GROUP BY 
+				VM.VENDORID, 
+				VM.VENDNAME, 
+				VM.PYMTRMID, 
+				VM.VNDCLSID, 
+				VM.CRLMTDLR
+		) DATA
+WHERE	[Unapplied_Amount] + [Current] + [31_to_60_Days] + [61_to_90_Days] + [91_and_Over] <> 0

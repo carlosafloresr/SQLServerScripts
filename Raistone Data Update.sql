@@ -1,0 +1,62 @@
+DECLARE	@Company		Varchar(5) = 'GIS',
+		@VendorId		Varchar(15) = '1190',
+		@Reversal		Bit = 1
+
+DECLARE	@Query			Varchar(MAX)
+
+SELECT	ParameterCode AS Parameter,
+		VarC AS ParValue
+INTO	##tmpParameters
+FROM	GPCustom.dbo.Parameters
+WHERE	ParameterCode LIKE 'RAISTONE_%'
+
+--SELECT	*
+--FROM	@tblParameters
+
+IF @Reversal = 0
+BEGIN
+	SET @Query = N'UPDATE	' + RTRIM(@Company) + '.dbo.PM00300
+SET		PM00300.ADDRESS1	= DATA.ADDRESS,
+		PM00300.ADDRESS2	= '''',
+		PM00300.ADDRESS3	= '''',
+		PM00300.CITY		= DATA.CITY,
+		PM00300.STATE		= DATA.STATE,
+		PM00300.ZIPCODE		= DATA.ZIP
+FROM	(
+		SELECT	ADDRESS = (SELECT ParValue FROM ##tmpParameters WHERE Parameter = ''RAISTONE_ADDRESS''),
+				CITY	= (SELECT ParValue FROM ##tmpParameters WHERE Parameter = ''RAISTONE_CITY''),
+				STATE	= (SELECT ParValue FROM ##tmpParameters WHERE Parameter = ''RAISTONE_STATE''),
+				ZIP		= (SELECT ParValue FROM ##tmpParameters WHERE Parameter = ''RAISTONE_ZIP''),
+				ADR.DEX_ROW_ID
+		FROM	' + RTRIM(@Company) + '.dbo.PM00300 ADR
+				INNER JOIN ' + RTRIM(@Company) + '.dbo.PM00200 VND ON ADR.VENDORID = VND.VENDORID AND ADR.ADRSCODE = VND.VADCDTRO
+		WHERE	ADR.VENDORID = ''' + RTRIM(@VendorId) + ''' 
+		) DATA
+WHERE	PM00300.DEX_ROW_ID = DATA.DEX_ROW_ID
+		AND PM00300.ADDRESS1 <> DATA.ADDRESS'
+END
+ELSE
+BEGIN
+	SET @Query = N'UPDATE	' + RTRIM(@Company) + '.dbo.PM00300
+SET		PM00300.ADDRESS1	= DATA.ADDRESS1,
+		PM00300.ADDRESS2	= DATA.ADDRESS2,
+		PM00300.ADDRESS3	= DATA.ADDRESS3,
+		PM00300.CITY		= DATA.CITY,
+		PM00300.STATE		= DATA.STATE,
+		PM00300.ZIPCODE		= DATA.ZIPCODE
+FROM	GPCustom.dbo.RapidPay_VendorAddress DATA 
+WHERE	PM00300.VENDORID = DATA.VENDORID 
+		AND PM00300.ADRSCODE = DATA.ADRSCODE'
+END
+
+EXECUTE(@Query)
+
+SET @Query = N'SELECT * FROM ' + RTRIM(@Company) + '.dbo.PM00300 WHERE VENDORID = ''' + RTRIM(@VendorId) + ''''
+EXECUTE(@Query)
+
+DROP TABLE ##tmpParameters
+
+--SELECT	*
+--FROM	SY01200
+--WHERE	Master_ID = '1190'
+--		AND Master_TYPE = 'VEN'

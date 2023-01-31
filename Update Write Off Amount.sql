@@ -1,0 +1,20 @@
+/*
+SELECT	CustNmbr, 
+		MXWOFTYP, 
+		RMOvrpymtWrtoffAcctIdx, 
+		RMWRACC, 
+		MXWROFAM 
+FROM	RM00101
+*/
+
+DECLARE	@Account	Int
+SET		@Account = (SELECT ACTINDX FROM GL00100 WHERE ACTNUMBR_2 = '00' AND ACTNUMBR_3 = '2103')
+
+IF @Account IS NOT Null
+BEGIN
+	UPDATE	RM00101
+	SET		MXWOFTYP = 1,
+			RMOvrpymtWrtoffAcctIdx = @Account,
+			RMWRACC = @Account,
+			MXWROFAM = 10
+END

@@ -1,0 +1,68 @@
+TRUNCATE TABLE AR_DocumentsBalance
+GO
+
+INSERT INTO AR_DocumentsBalance
+			([CustomerId],
+			[DocumentNum],
+			[DocPstgDate],
+			[ActivityDate],
+			[Balance],
+			[DocType],
+			[Void])
+SELECT	CustomerId,
+		DocumentNum,
+		DocPstgDate,
+		ISNULL(MAX(AppPstgDate), DocPstgDate) AS ActivityDate,
+		(DocAmount - SUM(ISNULL(Balance,0))) * IIF(DocType > 6, -1, 1) AS Balance,
+		DocType,
+		Void
+FROM	(
+		SELECT	DAT.CUSTNMBR AS CustomerId,
+				DAT.DOCNUMBR AS DocumentNum,
+				DAT.GLPOSTDT AS DocPstgDate,
+				DAT.ORTRXAMT AS DocAmount,
+				DAT.VOIDSTTS AS Void,
+				(APP.APPTOAMT + CASE WHEN DAT.RMDTYPAL > 6 THEN APP.WROFAMNT ELSE 0 END) AS Balance,
+				APP.GLPOSTDT AS AppPstgDate,
+				DAT.RMDTYPAL AS DocType
+		FROM	IMC.dbo.RM30101 DAT WITH(NOLOCK)
+				LEFT JOIN dbo.RM30201 APP WITH(NOLOCK) ON DAT.CUSTNMBR = APP.CUSTNMBR AND DAT.DOCNUMBR = IIF(DAT.RMDTYPAL > 6, APP.APFRDCNM, APP.APTODCNM) AND DAT.RMDTYPAL = IIF(DAT.RMDTYPAL > 6, APP.APFRDCTY, APP.APTODCTY)
+		WHERE	DAT.VOIDSTTS = 0
+		--SELECT	DAT.CUSTNMBR AS CustomerId,
+		--		DAT.DOCNUMBR AS DocumentNum,
+		--		DAT.GLPOSTDT AS DocPstgDate,
+		--		DAT.ORTRXAMT AS DocAmount,
+		--		DAT.VOIDSTTS AS Void,
+		--		APH.APPTOAMT AS Balance,
+		--		APH.DATE1 AS AppPstgDate,
+		--		DAT.RMDTYPAL AS DocType
+		--FROM	dbo.RM30101 DAT WITH(NOLOCK)
+		--		LEFT JOIN dbo.RM30201 APH WITH(NOLOCK) ON DAT.CUSTNMBR = APH.CUSTNMBR AND DAT.DOCNUMBR = APH.APTODCNM AND DAT.RMDTYPAL = APH.APTODCTY
+		--WHERE	DAT.VOIDSTTS = 0
+		--		AND DAT.RMDTYPAL < 7
+		--UNION
+		--SELECT	DAT.CUSTNMBR AS CustomerId,
+		--		DAT.DOCNUMBR AS DocumentNum,
+		--		DAT.GLPOSTDT AS DocPstgDate,
+		--		DAT.ORTRXAMT AS DocAmount,
+		--		DAT.VOIDSTTS AS Void,
+		--		(APH.APPTOAMT + APH.WROFAMNT) AS Balance,
+		--		APH.DATE1 AS AppPstgDate,
+		--		DAT.RMDTYPAL AS DocType
+		--FROM	dbo.RM30101 DAT WITH(NOLOCK)
+		--		LEFT JOIN dbo.RM30201 APH WITH(NOLOCK) ON DAT.CUSTNMBR = APH.CUSTNMBR AND DAT.DOCNUMBR = APH.APFRDCNM AND DAT.RMDTYPAL = APH.APFRDCTY
+		--WHERE	DAT.VOIDSTTS = 0
+		--		AND DAT.RMDTYPAL > 6
+		) DATA
+GROUP BY
+		CustomerId,
+		DocumentNum,
+		DocPstgDate,
+		DocAmount,
+		DocType,
+		Void
+
+/*
+DROP TABLE AR_DocumentsBalance
+TRUNCATE TABLE AR_DocumentsBalance
+*/
